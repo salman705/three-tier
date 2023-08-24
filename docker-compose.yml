@@ -1,0 +1,42 @@
+version: '3'
+services:
+  three-tier-frontend:
+    build: 
+      context: ./frontend-server
+    container_name: react-app-three-tier-frontend
+    ports:
+      - 3000:3000
+    stdin_open: true
+    tty: true
+    depends_on:
+      - three-tier-backend
+    networks:
+      - mynetwork 
+  three-tier-backend:
+    build:
+      context: ./backend-server
+    container_name: three-tier-backend
+    ports:
+      - '5000:5000'
+    restart: always
+    depends_on:
+      - db
+    networks:
+      - mynetwork
+  db:
+    image: postgres
+    container_name: db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: example
+      POSTGRES_DB: crud_app  
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - mynetwork   
+networks:
+  mynetwork:
+     driver: bridge
+volumes:
+  db_data:
+  
